@@ -4,20 +4,16 @@ import shuffleWords from "../helpers/shuffleWords";
 
 export default function Home() {
   const [typed, setTyped] = useState("");
-  const [enteredPairs, setEnteredPairs] = useState(["initial"]);
+  const [enteredPairs, setEnteredPairs] = useState([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
+  const caretLength = 0;
 
   useEffect(() => {
     window.onkeydown = (e) => {
       if (e.key.length == 1 && e.key != "Tab" && e.key != "Backspace") {
-
         if (validate(e.key, wordIndex, charIndex)) {
-
-          console.log("validation successful " + charIndex + " " + wordIndex)
-
-          
-
+          console.log("success " + charIndex + " " + wordIndex);
         } else console.log("error" + charIndex + " " + wordIndex);
 
         console.log(e.key);
@@ -33,23 +29,34 @@ export default function Home() {
         ? setCharIndex(0)
         : setCharIndex(charIndex + 1);
 
-        setEnteredPairs((enteredPairs) => [
-          ...enteredPairs,
-          wordIndex + "-" + charIndex
-        ]);
+      setEnteredPairs((enteredPairs) => {
+        if (!enteredPairs.includes(wordIndex + "-" + charIndex))
+          return [...enteredPairs, wordIndex + "-" + charIndex];
+        else
+          return [...enteredPairs]
+      });
 
-      console.log(shuffleWords[wordIndex].length + " word Index:" + wordIndex);
+      caretLength = 5 * enteredPairs.length;
+
+      console.log(
+        shuffleWords[wordIndex].length +
+          " word Index:" +
+          wordIndex +
+          " caret:" +
+          caretLength
+      );
       return true;
     } else if (key === " ") {
-      setWordIndex(wordIndex + 1);
+      charIndex === 0 && wordIndex + 1 < shuffleWords.length
+        ? setWordIndex(wordIndex + 1)
+        : null;
+
       return true;
     } else return false;
   };
 
-  
-
   return (
-    <div className="flex flex-col justify-center items-center h-screen ">
+    <div className="flex flex-col justify-center items-center h-screen relative">
       <div className="flex flex-wrap pr-60 pl-60  pb-20">
         {shuffleWords.map((word, idx) => {
           return (
@@ -59,7 +66,7 @@ export default function Home() {
                   return (
                     <p
                       key={index}
-                      className="text-xl font-semibold text-blue-500"
+                      className="text-xl font-semibold text-green-500"
                     >
                       {char}
                     </p>
@@ -74,6 +81,14 @@ export default function Home() {
             </div>
           );
         })}
+        <div className="absolute">
+          <span
+            className="  font-bold animate-ping text-xl "
+            style={{ marginLeft: -7 + caretLength }}
+          >
+            |
+          </span>
+        </div>
       </div>
       <div></div>
     </div>
