@@ -7,7 +7,6 @@ export default function Home() {
   const [enteredPairs, setEnteredPairs] = useState([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-  const caretLength = 0;
 
   useEffect(() => {
     window.onkeydown = (e) => {
@@ -32,11 +31,10 @@ export default function Home() {
       setEnteredPairs((enteredPairs) => {
         if (!enteredPairs.includes(wordIndex + "-" + charIndex))
           return [...enteredPairs, wordIndex + "-" + charIndex];
-        else
-          return [...enteredPairs]
+        else return [...enteredPairs];
       });
 
-      caretLength = 5 * enteredPairs.length;
+     
 
       console.log(
         shuffleWords[wordIndex].length +
@@ -47,9 +45,8 @@ export default function Home() {
       );
       return true;
     } else if (key === " ") {
-      charIndex === 0 && wordIndex + 1 < shuffleWords.length
-        ? setWordIndex(wordIndex + 1)
-        : null;
+      if (charIndex === 0 && wordIndex + 1 < shuffleWords.length)
+        setWordIndex(wordIndex + 1);
 
       return true;
     } else return false;
@@ -63,14 +60,28 @@ export default function Home() {
             <div key={word + idx} className="flex pr-2">
               {[...word].map((char, index) => {
                 if (enteredPairs.includes(idx + "-" + index))
-                  return (
-                    <p
-                      key={index}
-                      className="text-xl font-semibold text-green-500"
-                    >
-                      {char}
-                    </p>
-                  );
+                  if (
+                    enteredPairs[enteredPairs.length - 1] ==
+                    idx + "-" + index
+                  )
+                    return (
+                      <p
+                        key={index}
+                        className="text-xl font-semibold text-green-500"
+                      >
+                        {char}{" "}
+                        <span className="animation-ping ml-[-8px] "> |</span>
+                      </p>
+                    );
+                  else
+                    return (
+                      <p
+                        key={index}
+                        className="text-xl font-semibold text-green-500"
+                      >
+                        {char}
+                      </p>
+                    );
                 else
                   return (
                     <p key={index} className="text-xl font-semibold">
@@ -83,8 +94,9 @@ export default function Home() {
         })}
         <div className="absolute">
           <span
-            className="  font-bold animate-ping text-xl "
-            style={{ marginLeft: -7 + caretLength }}
+            className={` font-bold animate-ping ml-[-7px] ${
+              enteredPairs.length == 0 ? "block" : "hidden"
+            } `}
           >
             |
           </span>
